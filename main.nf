@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 
-#file_path = Channel.fromPath(params.file_path)
+
 recette = Channel.fromList(params.recette_in)
 
 def helpMessage() {
@@ -31,7 +31,6 @@ process zip{
   container 'klibr/ubuntu-zip:v1'
 
   input:
-  #path file_path
   val recette
 
   output:
