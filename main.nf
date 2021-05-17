@@ -2,6 +2,7 @@
 
 
 recette = Channel.fromList(params.recette_in)
+directory = Channel.fromPath("$PWD")
 
 def helpMessage() {
   log.info """
@@ -34,9 +35,8 @@ process zip{
   val recette
 
   output:
-  publishDir "$PWD/home/"
-  path(/home/fileZipped)
-  path(/home/fileUnzipped)
+  path "/home/fileZipped" into directory
+  path "/home/fileUnzipped" into directory
   
   script:
   switch (recette){
