@@ -1,9 +1,7 @@
 #!/usr/bin/env nextflow
 
 
-recette = Channel.fromList(params.recette_in)
-//directory1 = Channel.fromPath("$PWD")
-//directory2 = Channel.fromPath("$PWD")
+directory = Channel.fromPath(params.file_path)
 
 def helpMessage() {
   log.info """
@@ -28,39 +26,54 @@ if (params.help) {
 }
 
 
-process zip{
+process zipLocal{
 
   container 'klibr/ubuntu-zip:v1'
 
   input:
-  val recette
+  path directory
 
   output:
-  path "/home/fileZipped" into "$PWD"
-  path "/home/fileUnzipped" into ("$PWD")
-  
+  path "home/fileZipped/" into unzip_ch
+
+
+
+
+
   script:
-  switch (recette){
-    case 1:
+
     """
     #!/bin/bash
 
-    cd /fileToZip
+    set -e
+    echo zip
+    cd home/fileToZip
     zip image *
-    mv image.zip /home/fileZipped
+    mv image.zip ../fileZipped/
 
     """
-    case 2:
+}
+
+process unzipLocal{
+
+  container 'klibr/ubuntu-zip:v1'
+
+  input:
+  path unzip_ch
+
+  script:
+
+
     """
     #!/bin/bash
 
-    cd /fileToUnzip
+    set -e
+    echo unzip
+    ls
+    cd fileZipped
     unzip *.zip
-    rm -r *.zip
-    mv * /home/fileUnzipped
+    mv * ../fileUnzipped
 
     """
 
-
-  }
 }
